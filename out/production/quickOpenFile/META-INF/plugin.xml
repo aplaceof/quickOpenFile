@@ -1,0 +1,49 @@
+<idea-plugin>
+  <id>com.alf.plugin.QuickOpenFile</id>
+  <name>QuickOpenFile</name>
+  <version>1.0</version>
+
+  <vendor email="aplaceof@163.com" url="https://github.com/aplaceof/quickOpenFile">self development</vendor>
+
+  <description>this is a plugin to qucikly you the  file you  often use, you can open the file
+    without remember the file name, only think about the function or the character of the file </description>
+
+  <change-notes><![CDATA[
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="173.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  -->
+
+  <depends>com.intellij.modules.lang</depends>
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+    <themeProvider id="3b9bb3aa-9295-4956-918a-d38b73907e1a" path="/Test.theme.json"/>
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="com.alf.plugin.QuickOpenFile" class="QuickOpenFile" text="QuickOpenFile" description="QuickOpenFile">
+    <add-to-group group-id="GenerateGroup" anchor="first"/>
+    <keyboard-shortcut keymap="$default" first-keystroke="control alt J"/>
+    </action>
+  </actions>
+
+<!--  <actions>-->
+<!--    <group id="com.alf.plugin.QuickOpenFile2" text="QuickOpenFile" description="QuickOpenFileu">-->
+<!--      <add-to-group group-id="MainMenu" anchor="last"  />-->
+<!--      <action id="com.alf.plugin.QuickOpenFile2" class="QuickOpenFile" text="QuickOpenFile"-->
+<!--              description="QuickOpenFile" keymap="$default"   >-->
+<!--        <keyboard-shortcut keymap="$default" first-keystroke="control alt H"/>-->
+<!--      </action>-->
+<!--    </group>-->
+<!--  </actions>-->
+
+</idea-plugin>

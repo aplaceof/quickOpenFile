@@ -1,0 +1,2 @@
+animal,with fur,mammalian,dog: src/Dog.java; src/Dog.java
+plant,with flower,tree,oak: src/Oak.java; src/Oak.java
