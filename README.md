@@ -35,5 +35,9 @@ If you have too much file items , you can search with filters, for example, fill
 <p align="center">
   <img src="pic/filter.png" height="200"  />
 </p>
- 
+
+### go to target line 
+
+ Fill the target string in the  text feild, and click "tar confirm" button,  when you double click the related file, it will go to the line number of  target line if the line contains the target line. 
+
 Enjoy it.
