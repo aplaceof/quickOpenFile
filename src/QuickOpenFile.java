@@ -49,11 +49,13 @@ public class QuickOpenFile extends AnAction {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
-            String tempString = null;
+            String line = null;
             // read oneline per iteration
-            while ((tempString = reader.readLine()) != null) {
-                if( !tempString.trim().isEmpty())  {
-                    this.addToList(tempString,p);
+            while ((line = reader.readLine()) != null) {
+
+                // if not empty and not comment starts with '#'
+                if( !line.trim().isEmpty() && !line.startsWith("#"))  {
+                    this.addToList(line,p);
                 }
             }
             reader.close();

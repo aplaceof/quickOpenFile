@@ -1,4 +1,9 @@
+import com.intellij.ide.DataManager;
+import com.intellij.ide.actions.GotoLineAction;
 import com.intellij.ide.actions.OpenFileAction;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.editor.*;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 
@@ -13,7 +18,9 @@ import java.awt.*;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +51,17 @@ public class QuickOpenForm extends JFrame {
     String detailInfo1 = "";
     String detailInfo2 = "";
 
+    // text to find target line
+    private JTextField targetText;
+    private JButton tarConfirmBtn;
+    private JPanel tarPanel;
+
+    private String targetInfo = "";
+
     // JTable to display data
     private JTable pageInfoTable;
     private JPanel panel2;
+
 
     // store display data
     ArrayList<String> descList = new ArrayList<String>();
@@ -142,6 +157,7 @@ public class QuickOpenForm extends JFrame {
 
     // set component size
     public void setSize() {
+        // text to filter data
         infoLabel.setPreferredSize(new Dimension(80,40));
         hierarchyText1.setPreferredSize(new Dimension(100,40));
         hierarchyText2.setPreferredSize(new Dimension(100,40));
@@ -151,6 +167,16 @@ public class QuickOpenForm extends JFrame {
         detailText2.setPreferredSize(new Dimension(100,40));
 
         confirmBtn.setPreferredSize(new Dimension(80,40));
+
+    }
+
+    // set tarString component size
+    public void setTargetSize() {
+
+        // text to find target line
+        targetText.setPreferredSize(new Dimension(400,40));
+        tarConfirmBtn.setPreferredSize(new Dimension(120,40));
+
     }
 
 
@@ -186,6 +212,20 @@ public class QuickOpenForm extends JFrame {
         this.addConfirmListener();  // add listener to  confirmBtn
         this.setSize();
 
+        // text to find target line
+
+        targetText = new JTextField();
+        tarConfirmBtn = new JButton("tar confirm");
+        tarPanel = new JPanel();
+        this.setTargetSize();
+        this.addtarConfirmListener();
+
+        // add into panel
+        tarPanel.add(targetText);
+        tarPanel.add(tarConfirmBtn);
+
+
+
         panel2 = new JPanel();
         pageInfoTable = new JTable() {
             private static final long serialVersionUID = 1L;
@@ -212,7 +252,8 @@ public class QuickOpenForm extends JFrame {
         // add panel into JFrame
 
         this.add(panel1, BorderLayout.NORTH);
-        this.add(panel2, BorderLayout.CENTER);
+        this.add(tarPanel, BorderLayout.CENTER);
+        this.add(panel2, BorderLayout.SOUTH);
 
 
         this.pack();
@@ -260,10 +301,61 @@ public class QuickOpenForm extends JFrame {
                     String filePath = (String)pageInfoTable.getValueAt(row, col);
 
 //                    System.out.println( "open file ： "  + row + "  " + col + "  "  + filePath);
-                    OpenFileAction.openFile( filePrefix + "/" + filePath, project);
+
+                    // open file and go to the line num
+                    String fileName = filePrefix + "/" + filePath;
+                    OpenFileAction.openFile( fileName, project);
+
+                    // if target string is not empty
+                    if(targetInfo!= null &&  !targetInfo.trim().isEmpty()) {
+                        int lineNum = findLineNum(fileName, targetInfo);
+                        if(lineNum >= 0) {
+                            gotoLine(lineNum);
+                        }
+                    }
+
                 }
             }
         });
+    }
+    // find the line number of the target String
+    private int findLineNum(String fileName, String target) {
+
+        int lineNum = 0;
+
+        File file = new File(fileName);
+        BufferedReader reader = null;
+        boolean isFind = false;
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String line  = null;
+            // read oneline per iteration
+            while ((line = reader.readLine()) != null) {
+                lineNum ++;
+                // find the target String
+                if( line.trim().equals(target.trim())) {
+                    isFind = true;
+                    break;
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e1) {
+                }
+            }
+        }
+        // if find the target String
+        if(isFind && lineNum > 0){
+            return lineNum;
+        }
+
+       return -1;
     }
 
     //  add  confirmBtn click listener
@@ -304,5 +396,65 @@ public class QuickOpenForm extends JFrame {
             }
         });
 
+    }
+
+    //  add  tarConfirmBtn click listener
+    private void addtarConfirmListener(){
+
+        this.tarConfirmBtn.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                targetInfo = targetText.getText().trim();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
+    }
+
+
+    public boolean gotoLine(int lineNumber ) {
+
+        DataContext dataContext = DataManager.getInstance().getDataContext();
+//        Project project = getProject(dataContext);
+
+        Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+
+        if( editor == null )
+            return false;
+
+        CaretModel caretModel = editor.getCaretModel();
+        int totalLineCount = editor.getDocument().getLineCount();
+
+        if( lineNumber > totalLineCount )
+            return false;
+
+        //Moving caret to line number
+        int realNum = lineNumber>1? lineNumber-1 : 0;
+        caretModel.moveToLogicalPosition(new LogicalPosition(realNum,0));
+
+        //Scroll to the caret
+        ScrollingModel scrollingModel = editor.getScrollingModel();
+        scrollingModel.scrollToCaret(ScrollType.CENTER);
+
+        return true;
     }
 }

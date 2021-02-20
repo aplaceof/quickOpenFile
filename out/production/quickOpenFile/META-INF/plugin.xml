@@ -32,7 +32,7 @@
     <!-- Add your actions here -->
     <action id="com.alf.plugin.QuickOpenFile" class="QuickOpenFile" text="QuickOpenFile" description="QuickOpenFile">
     <add-to-group group-id="GenerateGroup" anchor="first"/>
-    <keyboard-shortcut keymap="$default" first-keystroke="control alt J"/>
+    <keyboard-shortcut keymap="$default" first-keystroke="control alt K"/>
     </action>
   </actions>
 
