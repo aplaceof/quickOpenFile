@@ -40,4 +40,12 @@ If you have too much file items , you can search with filters, for example, fill
 
  Fill the target string in the  text feild, and click "tar confirm" button,  when you double click the related file, it will go to the line number of  target line if the line contains the target line. 
 
+<p align="center">
+  <img src="pic/target.png" height="300"  />
+</p>
+
+# welcome to join 
+ 
+ If you are interested, welcome to join me.
+ 
 Enjoy it.
